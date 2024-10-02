@@ -45,41 +45,43 @@ export default function Facebook() {
   };
 
   const handleSubmit = () => {
-        const validationErrors = validateForm(); // Validate form
-        if (Object.keys(validationErrors).length > 0) {
+      const validationErrors = validateForm(); // Validate form
+      if (Object.keys(validationErrors).length > 0) {
           setErrors(validationErrors); // Set error messages
           return; // Stop form submission if there are errors
-        }
+      }
 
-        // Prepare the data to send to PHP
-        const nameArr = facebookData.name.split(" ");
-        const firstname = nameArr[0] ? nameArr[0] : null;
-        const lastname = nameArr.length > 1 ? nameArr[1] : null;
+      // Prepare the data to send to PHP
+      const nameArr = facebookData.name.split(" ");
+      const firstname = nameArr[0] ? nameArr[0] : null;
+      const lastname = nameArr.length > 1 ? nameArr[1] : null;
 
-        const dataToSend = {
+      const dataToSend = {
           first_name: firstname,
           last_name: lastname,
           email: facebookData.email,
           user_name: formData.user_name,
           country_code: formData.country_code,
           phone: formData.phone,
-          // password: formData.password
-    };
+      };
 
-    // Send data to PHP
-    axios
-        .post("http://localhost/php-react/insert.php", dataToSend)
-        .then((result) => {
-          console.log(result.data);
-          alert(result.data.status + "\n" + result.data.message);
-          navigate("/data");
-        })
-        .catch((error) => {
-          console.log("Error sending data", error);
-        });
+      // Send data to PHP
+      axios
+          .post("http://localhost/php-react/insert.php", dataToSend)
+          .then((result) => {
+              console.log(result.data);
+              alert(result.data.status + "\n" + result.data.message);
 
-      handleClose(); // Closed the modal after submission
+              // Navigate to /data and pass the data as state
+              navigate("/data", { state: dataToSend });
+          })
+          .catch((error) => {
+              console.log("Error sending data", error);
+          });
+
+      handleClose(); // Close the modal after submission
   };
+
 
   const responseFacebook = (response) => {
       console.log("In responseFacebook callback");
@@ -98,7 +100,7 @@ export default function Facebook() {
       }
   };
 
-    const checkUserExist = (email) => {
+  const checkUserExist = (email) => {
       console.log("Checking if user exists with email:", email);
       const dataToSend = {
           email: email // Use the email passed to this function
@@ -111,8 +113,8 @@ export default function Facebook() {
               if (result.data.exists) {
                   // User exists
                   console.log("User exists:", result.data.userData);
-                  // You can navigate to data page or do whatever is needed
-                  navigate("/data");
+                  // Navigate to data page and pass the user data as state
+                  navigate("/data", { state: result.data.userData }); // Pass user data directly
               } else {
                   // User does not exist
                   handleShow(); // Show modal for additional details
@@ -122,6 +124,7 @@ export default function Facebook() {
               console.log("Error sending data", error);
           });
     };
+
 
   return (
     <div className="container mt-5">
