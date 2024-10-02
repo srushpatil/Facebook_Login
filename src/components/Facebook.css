@@ -1,0 +1,38 @@
+.container .fb-btn{
+    padding: 25px;
+    background-color: #0D6DFD;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 80px;
+    margin-left: 90px;
+}
+
+.fa-facebook{
+    margin-right: 10px;
+}
+
+.popup-form{
+    background-color: rgba(74, 118, 154, 0.8);
+}
+
+.popup-form-body{
+    /* background-color: rgba(48, 8, 142, 0.9); */
+}
+
+.popup-content .ip-details{
+    border-radius: 30px;
+    border: 1px solid black;
+}
+::placeholder{
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .container .fb-btn{
+        margin-bottom: 0;
+        margin-left: 0;
+    }
+}
