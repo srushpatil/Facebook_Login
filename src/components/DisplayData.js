@@ -2,8 +2,8 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 export default function DisplayData() {
-  const location = useLocation();
-  const { state } = location;
+  const location = useLocation();  //used the useLocation hook from react-router-dom to access the location object, which contains the state passed during navigation:
+  const { state } = location;  // Destructure state from location
 
   // If no data is passed, display a message
   if (!state || !state.first_name || !state.email) {
