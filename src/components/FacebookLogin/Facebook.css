@@ -1,6 +1,6 @@
 .container .fb-btn{
     padding: 25px;
-    background-color: #0D6DFD;
+    background-color: var(--fb-button-color);
     color: white;
     font-size: 20px;
     font-weight: bold;
@@ -16,18 +16,30 @@
 
 .popup-form{
     background-color: rgba(74, 118, 154, 0.8);
+    color: white;
 }
 
-.popup-form-body{
-    /* background-color: rgba(48, 8, 142, 0.9); */
+.popup-content  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* If you want them stacked vertically */
 }
 
 .popup-content .ip-details{
     border-radius: 30px;
     border: 1px solid black;
+    width: 350px;
 }
+
+.module-buttons{
+    background: var(--linear-grad-color);
+    border: 1px solid var(--linear-grad-color);
+    padding: 10px;
+}
+
 ::placeholder{
-    font-size: 14px;
+    font-size: 13px;
 }
 
 @media (max-width: 768px) {

@@ -1,7 +1,7 @@
 import './App.css';
-import Facebook from './components/Facebook';
-import Phpsignupform from './components/Phpsignupform';
-import DisplayData from './components/DisplayData'; // Import the component for displaying data
+import Facebook from './components/FacebookLogin/Facebook';
+import Phpsignupform from './components/SignUp/Phpsignupform';
+import DisplayData from './components/DisplayData/DisplayData'; // Import the component for displaying data
 import { Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <Routes>
         {/* Main page where signup form and Facebook login appear */}
         <Route 
-          path="/home" 
+          path="/" 
           element={
             <div className="container-wrapper">
               <div className="flex-container">

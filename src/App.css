@@ -1,3 +1,9 @@
+:root{
+  --linear-grad-color : linear-gradient(to right, blueviolet, rgb(192, 62, 192));
+  --fb-button-color : #0D6DFD;
+  --navbar-logo-color : #3498db;
+}
+
 .container-wrapper {
   display: flex;
   flex-direction: column;
@@ -59,7 +65,7 @@
   align-items: center;
   font-size: 25px;
   font-weight: bold;
-  color: #3498db;
+  color: #0a86d8;
 }
 
 h1 {

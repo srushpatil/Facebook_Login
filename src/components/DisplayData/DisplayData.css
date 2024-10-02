@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .container h2{
+    font-size: 50px;
+    font-family: cursive;
+    /* text-transform: uppercase; */
+    font-weight: bold;
+  }
+
+  .data-display {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    line-height: 1.5;
+    margin-top: 20px;
+  }
+  
+  .data-item {
+    display: flex;
+    justify-content: flex-start;
+    width: 300px; /* Adjust as needed */
+    margin: 10px 0;
+    text-align: left; /* Ensure the text is left-aligned within the data-item */
+  }
+  
+  .data-item strong {
+    width: 150px; /* Label width */
+    margin-right: 10px; /* Space between label and data */
+  }
+  
+  .data-item span {
+    text-align: left; /* Align data to the left */
+  }
+  
+  .container .btn{
+    padding: 15px 40px;
+    font-weight: bold;
+  }

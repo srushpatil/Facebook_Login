@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Phpsignupform.css';
 import { FaUsers } from "react-icons/fa";
+import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
+import { IoIosMail } from "react-icons/io";
+import { FaRegFileCode } from "react-icons/fa6";
+import { FaPhoneAlt } from "react-icons/fa";
 
 export default function Php_signupform() {
   const [data, setData] = useState({
@@ -90,7 +94,7 @@ export default function Php_signupform() {
               onChange={handleChange}
               value={data.first_name || ""}
             />
-            <label>First name</label>
+            <label><MdOutlineDriveFileRenameOutline className='form-ip-icons'/>First name</label>
             {errors.first_name && <small className="text-danger">{errors.first_name}</small>}
           </div>
 
@@ -103,7 +107,7 @@ export default function Php_signupform() {
               onChange={handleChange}
               value={data.last_name || ""}
             />
-            <label>Last name</label>
+            <label><MdOutlineDriveFileRenameOutline className='form-ip-icons'/>Last name</label>
             {errors.last_name && <small className="text-danger">{errors.last_name}</small>}
           </div>
 
@@ -116,7 +120,7 @@ export default function Php_signupform() {
               onChange={handleChange}
               value={data.user_name || ""}
             />
-            <label>User name</label>
+            <label><MdOutlineDriveFileRenameOutline className='form-ip-icons'/>User name</label>
             {errors.user_name && <small className="text-danger">{errors.user_name}</small>}
           </div>
 
@@ -129,7 +133,7 @@ export default function Php_signupform() {
               onChange={handleChange}
               value={data.email || ""}
             />
-            <label>Email</label>
+            <label><IoIosMail className='form-ip-icons'/>Email</label>
             {errors.email && <small className="text-danger">{errors.email}</small>}
           </div>
 
@@ -142,7 +146,7 @@ export default function Php_signupform() {
               onChange={handleChange}
               value={data.country_code || ""}
             />
-            <label>Country code</label>
+            <label><FaRegFileCode className='form-ip-icons' style={{height:'20px'}}/>Country code</label>
             {errors.country_code && <small className="text-danger">{errors.country_code}</small>}
           </div>
 
@@ -155,7 +159,7 @@ export default function Php_signupform() {
               onChange={handleChange}
               value={data.phone || ""}
             />
-            <label>Phone number</label>
+            <label><FaPhoneAlt className='form-ip-icons' style={{height:'20px'}}/>Phone number</label>
             {errors.phone && <small className="text-danger">{errors.phone}</small>}
           </div>
 
@@ -172,7 +176,7 @@ export default function Php_signupform() {
             {errors.password && <small className="text-danger">{errors.password}</small>}
           </div> */}
 
-          <button type="submit" className="btn btn-primary btn-lg submit">Submit</button>
+          <button type="submit" className="btn btn-primary btn-lg submit">SUBMIT</button>
         </form>
       </div>
     </>

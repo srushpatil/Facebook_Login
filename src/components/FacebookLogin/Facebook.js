@@ -138,7 +138,7 @@ export default function Facebook() {
       />
 
       {/* Modal for input */}
-      <Modal show={showModal} onHide={handleClose}>
+      <Modal show={showModal} onHide={handleClose} >
         <Modal.Header closeButton className="popup-form">
           <Modal.Title>Please Enter Additional Details!</Modal.Title>
         </Modal.Header>
@@ -146,7 +146,7 @@ export default function Facebook() {
         <Modal.Body className="popup-form-body">
           <Form className="popup-content">
             <Form.Group className="mb-3 ">
-              <Form.Label>Country Code</Form.Label>
+              <Form.Label style={{fontSize:'18px'}}>Country Code</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter country code"
@@ -161,7 +161,7 @@ export default function Facebook() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Phone Number</Form.Label>
+              <Form.Label  style={{fontSize:'18px'}}>Phone Number</Form.Label>
               <Form.Control
                 type="tel"
                 placeholder="Enter phone number"
@@ -176,7 +176,7 @@ export default function Facebook() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>User Name</Form.Label>
+              <Form.Label  style={{fontSize:'18px'}}>User Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter user name"
@@ -193,10 +193,10 @@ export default function Facebook() {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button onClick={handleClose} className="module-buttons">
             Close
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button onClick={handleSubmit} className="module-buttons">
             Submit
           </Button>
         </Modal.Footer>

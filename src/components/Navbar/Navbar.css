@@ -1,0 +1,17 @@
+.navbar{
+    height: 6rem;
+}
+
+.navbar .nav-item .nav-link{
+    font-size: 19px;
+    margin-right: 5rem;
+    color: white;
+}
+
+.navbar .navbar-brand{
+    margin-left: 5rem;
+    font-size: 30px;
+    font-family: cursive;
+    color: var(--navbar-logo-color);
+    font-weight: bold;
+}
