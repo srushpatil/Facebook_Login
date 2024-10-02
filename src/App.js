@@ -10,7 +10,7 @@ function App() {
       <Routes>
         {/* Main page where signup form and Facebook login appear */}
         <Route 
-          path="/" 
+          path="/home" 
           element={
             <div className="container-wrapper">
               <div className="flex-container">
