@@ -27,70 +27,101 @@ export default function Facebook() {
   const handleShow = () => setShowModal(true);
 
   const validateForm = () => {
-    const newErrors = {};
-    if (!formData.country_code) {
-      newErrors.country_code = "Country code is required.";
-    } else if (!formData.country_code.startsWith("+")) {
-      newErrors.country_code = "Country code should start with '+";
-    }
+        const newErrors = {};
+        if (!formData.country_code) {
+          newErrors.country_code = "Country code is required.";
+        } else if (!formData.country_code.startsWith("+")) {
+          newErrors.country_code = "Country code should start with '+";
+        }
 
-    if (!formData.phone) {
-      newErrors.phone = "Phone number is required.";
-    } else if (formData.phone.length !== 10) {
-      newErrors.phone = "Phone number must be exactly 10 digits.";
-    }
+        if (!formData.phone) {
+          newErrors.phone = "Phone number is required.";
+        } else if (formData.phone.length !== 10) {
+          newErrors.phone = "Phone number must be exactly 10 digits.";
+        }
 
-    if (!formData.user_name) newErrors.user_name = "Username is required.";
-    return newErrors;
+        if (!formData.user_name) newErrors.user_name = "Username is required.";
+        return newErrors;
   };
 
   const handleSubmit = () => {
-    const validationErrors = validateForm(); // Validate form
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors); // Set error messages
-      return; // Stop form submission if there are errors
-    }
+        const validationErrors = validateForm(); // Validate form
+        if (Object.keys(validationErrors).length > 0) {
+          setErrors(validationErrors); // Set error messages
+          return; // Stop form submission if there are errors
+        }
 
-    // Prepare the data to send to PHP
-    const nameArr = facebookData.name.split(" ");
-    const firstname = nameArr[0] ? nameArr[0] : null;
-    const lastname = nameArr.length > 1 ? nameArr[1] : null;
+        // Prepare the data to send to PHP
+        const nameArr = facebookData.name.split(" ");
+        const firstname = nameArr[0] ? nameArr[0] : null;
+        const lastname = nameArr.length > 1 ? nameArr[1] : null;
 
-    const dataToSend = {
-      first_name: firstname,
-      last_name: lastname,
-      email: facebookData.email,
-      user_name: formData.user_name,
-      country_code: formData.country_code,
-      phone: formData.phone,
+        const dataToSend = {
+          first_name: firstname,
+          last_name: lastname,
+          email: facebookData.email,
+          user_name: formData.user_name,
+          country_code: formData.country_code,
+          phone: formData.phone,
+          // password: formData.password
     };
 
     // Send data to PHP
     axios
-      .post("http://localhost/php-react/insert.php", dataToSend)
-      .then((result) => {
-        console.log(result.data);
-        alert(result.data.status + "\n" + result.data.message);
+        .post("http://localhost/php-react/insert.php", dataToSend)
+        .then((result) => {
+          console.log(result.data);
+          alert(result.data.status + "\n" + result.data.message);
+          navigate("/data");
+        })
+        .catch((error) => {
+          console.log("Error sending data", error);
+        });
 
-        // Navigate to the Data component, passing inserted data as state
-        navigate("/data", { state: dataToSend });
-      })
-      .catch((error) => {
-        console.log("Error sending data", error);
-      });
-
-    handleClose(); // Close the modal after submission
+      handleClose(); // Closed the modal after submission
   };
 
   const responseFacebook = (response) => {
-    if (response.accessToken) {
-      console.log("Logged in successfully", response);
-      setFacebookData(response); // Save Facebook data
-      handleShow(); // Show the modal form
-    } else {
-      console.log("Login Failed");
-    }
+      console.log("In responseFacebook callback");
+      if (response.accessToken) {
+          console.log("Logged in successfully", response);
+          setFacebookData(response); // Save Facebook data
+          // Only call checkUserExist if facebookData is valid and contains an email
+          if (response.email) {
+              checkUserExist(response.email); // Pass the email directly
+          } else {
+              console.log("Email not found in response");
+              handleShow(); // Show modal or handle case where email is missing
+          }
+      } else {
+          console.log("Login Failed", response); // Handle login failure
+      }
   };
+
+    const checkUserExist = (email) => {
+      console.log("Checking if user exists with email:", email);
+      const dataToSend = {
+          email: email // Use the email passed to this function
+      };
+
+      axios
+          .post("http://localhost/php-react/check_user.php", dataToSend)
+          .then((result) => {
+              console.log(result.data);
+              if (result.data.exists) {
+                  // User exists
+                  console.log("User exists:", result.data.userData);
+                  // You can navigate to data page or do whatever is needed
+                  navigate("/data");
+              } else {
+                  // User does not exist
+                  handleShow(); // Show modal for additional details
+              }
+          })
+          .catch((error) => {
+              console.log("Error sending data", error);
+          });
+    };
 
   return (
     <div className="container mt-5">
