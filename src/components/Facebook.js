@@ -20,7 +20,7 @@ export default function Facebook() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-	setErrors({ ...errors, [name]: "" }); // Clear error for specific field on change
+    setErrors({ ...errors, [name]: "" }); // Clear error for specific field on change
   };
 
   const handleClose = () => setShowModal(false);
@@ -28,17 +28,17 @@ export default function Facebook() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.country_code){ 
-		newErrors.country_code = "Country code is required.";
-	}else if(!formData.country_code.startsWith('+')){
-		newErrors.country_code = "Country code should start with '+"
-	}
+    if (!formData.country_code) {
+      newErrors.country_code = "Country code is required.";
+    } else if (!formData.country_code.startsWith("+")) {
+      newErrors.country_code = "Country code should start with '+";
+    }
 
     if (!formData.phone) {
-		newErrors.phone = "Phone number is required.";
-	}else if (formData.phone.length !== 10){ 
-		newErrors.phone = "Phone number must be exactly 10 digits.";
-	}
+      newErrors.phone = "Phone number is required.";
+    } else if (formData.phone.length !== 10) {
+      newErrors.phone = "Phone number must be exactly 10 digits.";
+    }
 
     if (!formData.user_name) newErrors.user_name = "Username is required.";
     return newErrors;
@@ -50,12 +50,12 @@ export default function Facebook() {
       setErrors(validationErrors); // Set error messages
       return; // Stop form submission if there are errors
     }
-  
+
     // Prepare the data to send to PHP
     const nameArr = facebookData.name.split(" ");
     const firstname = nameArr[0] ? nameArr[0] : null;
     const lastname = nameArr.length > 1 ? nameArr[1] : null;
-  
+
     const dataToSend = {
       first_name: firstname,
       last_name: lastname,
@@ -64,24 +64,23 @@ export default function Facebook() {
       country_code: formData.country_code,
       phone: formData.phone,
     };
-  
+
     // Send data to PHP
     axios
       .post("http://localhost/php-react/insert.php", dataToSend)
       .then((result) => {
         console.log(result.data);
         alert(result.data.status + "\n" + result.data.message);
-  
+
         // Navigate to the Data component, passing inserted data as state
         navigate("/data", { state: dataToSend });
       })
       .catch((error) => {
         console.log("Error sending data", error);
       });
-  
+
     handleClose(); // Close the modal after submission
   };
-  
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
@@ -120,9 +119,11 @@ export default function Facebook() {
                 name="country_code"
                 value={formData.country_code}
                 onChange={handleInputChange}
-				className="ip-details"
+                className="ip-details"
               />
-			  {errors.country_code && <small className="text-danger">{errors.country_code}</small>}
+              {errors.country_code && (
+                <small className="text-danger">{errors.country_code}</small>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -133,9 +134,11 @@ export default function Facebook() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-				className="ip-details"
+                className="ip-details"
               />
-			  {errors.phone && <small className="text-danger">{errors.phone}</small>}
+              {errors.phone && (
+                <small className="text-danger">{errors.phone}</small>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -146,21 +149,12 @@ export default function Facebook() {
                 name="user_name"
                 value={formData.user_name}
                 onChange={handleInputChange}
-				className="ip-details"
+                className="ip-details"
               />
-			  {errors.user_name && <small className="text-danger">{errors.user_name}</small>}
+              {errors.user_name && (
+                <small className="text-danger">{errors.user_name}</small>
+              )}
             </Form.Group>
-
-            {/* <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            </Form.Group> */}
           </Form>
         </Modal.Body>
 
@@ -172,7 +166,6 @@ export default function Facebook() {
             Submit
           </Button>
         </Modal.Footer>
-
       </Modal>
     </div>
   );
