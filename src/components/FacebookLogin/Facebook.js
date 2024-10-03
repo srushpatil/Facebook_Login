@@ -45,43 +45,45 @@ export default function Facebook() {
   };
 
   const handleSubmit = () => {
-      const validationErrors = validateForm(); // Validate form
-      if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors); // Set error messages
-          return; // Stop form submission if there are errors
-      }
-
-      // Prepare the data to send to PHP
-      const nameArr = facebookData.name.split(" ");
-      const firstname = nameArr[0] ? nameArr[0] : null;
-      const lastname = nameArr.length > 1 ? nameArr[1] : null;
-
-      const dataToSend = {
-          first_name: firstname,
-          last_name: lastname,
-          email: facebookData.email,
-          user_name: formData.user_name,
-          country_code: formData.country_code,
-          phone: formData.phone,
-      };
-
-      // Send data to PHP
-      axios
-          .post("http://localhost/php-react/insert.php", dataToSend)
-          .then((result) => {
-              console.log(result.data);
-              alert(result.data.status + "\n" + result.data.message);
-
-              // Navigate to /data and pass the data as state
-              navigate("/data", { state: dataToSend });
-          })
-          .catch((error) => {
-              console.log("Error sending data", error);
-          });
-
-      handleClose(); // Close the modal after submission
+    const validationErrors = validateForm(); // Validate form
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors); // Set error messages
+      return; // Stop form submission if there are errors
+    }
+  
+    // Prepare the data to send to PHP
+    const nameArr = facebookData.name.split(" ");
+    const firstname = nameArr[0] ? nameArr[0] : null;
+    const lastname = nameArr.length > 1 ? nameArr[1] : null;
+  
+    const dataToSend = {
+      first_name: firstname,
+      last_name: lastname,
+      email: facebookData.email,
+      user_name: formData.user_name,
+      country_code: formData.country_code,
+      phone: formData.phone,
+    };
+  
+    // Store session data after successful form submission
+    sessionStorage.setItem("userSession", JSON.stringify(dataToSend));
+  
+    // Send data to PHP
+    axios
+      .post("http://localhost/php-react/insert.php", dataToSend)
+      .then((result) => {
+        console.log(result.data);
+        alert(result.data.status + "\n" + result.data.message);
+  
+        // Navigate to /data and pass the data as state
+        navigate("/data", { state: dataToSend });
+      })
+      .catch((error) => {
+        console.log("Error sending data", error);
+      });
+  
+    handleClose(); // Close the modal after submission
   };
-
 
   const responseFacebook = (response) => {
       console.log("In responseFacebook callback");
@@ -101,30 +103,33 @@ export default function Facebook() {
   };
 
   const checkUserExist = (email) => {
-      console.log("Checking if user exists with email:", email);
-      const dataToSend = {
-          email: email // Use the email passed to this function
-      };
-
-      axios
-          .post("http://localhost/php-react/check_user.php", dataToSend)
-          .then((result) => {
-              console.log(result.data);
-              if (result.data.exists) {
-                  // User exists
-                  console.log("User exists:", result.data.userData);
-                  // Navigate to data page and pass the user data as state
-                  navigate("/data", { state: result.data.userData }); // Pass user data directly
-              } else {
-                  // User does not exist
-                  handleShow(); // Show modal for additional details
-              }
-          })
-          .catch((error) => {
-              console.log("Error sending data", error);
-          });
+    console.log("Checking if user exists with email:", email);
+    const dataToSend = {
+      email: email, // Use the email passed to this function
     };
-
+  
+    axios
+      .post("http://localhost/php-react/check_user.php", dataToSend)
+      .then((result) => {
+        console.log(result.data);
+        if (result.data.exists) {
+          // User exists
+          console.log("User exists:", result.data.userData);
+  
+          // Store session data if user already exists
+          sessionStorage.setItem("userSession", JSON.stringify(result.data.userData));
+  
+          // Navigate to /data page and pass the user data as state
+          navigate("/data", { state: result.data.userData }); // Pass user data directly
+        } else {
+          // User does not exist
+          handleShow(); // Show modal for additional details
+        }
+      })
+      .catch((error) => {
+        console.log("Error sending data", error);
+      });
+  };
 
   return (
     <div className="container mt-5">

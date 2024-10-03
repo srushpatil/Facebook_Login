@@ -25,7 +25,7 @@
 .form-container  .form-control{
     border-radius: 30px;
     background-color: rgba(255, 255, 255, 0);
-    border: 1px solid rgba(154, 154, 154, 0.781);
+    border: 1px solid rgba(15, 15, 15, 0.781);
     color: grey;
 }
   
@@ -39,8 +39,8 @@
 }
 
 .form-container .submit{
-    padding-left: 90px !important;
-    padding-right: 90px !important;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
     padding-top: 15px !important;
     padding-bottom: 15px !important;
     border-radius: 20px;

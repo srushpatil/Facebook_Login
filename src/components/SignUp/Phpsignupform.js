@@ -176,7 +176,7 @@ export default function Php_signupform() {
             {errors.password && <small className="text-danger">{errors.password}</small>}
           </div> */}
 
-          <button type="submit" className="btn btn-primary btn-lg submit">SUBMIT</button>
+          <button type="submit" className="btn btn-primary btn-lg submit">CREATE NEW ACCOUNT</button>
         </form>
       </div>
     </>
