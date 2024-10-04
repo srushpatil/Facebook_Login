@@ -5,6 +5,7 @@ import "./Facebook.css";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // useNavigate for navigation
 
+
 export default function Facebook() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -123,7 +124,7 @@ export default function Facebook() {
       .post("http://localhost/php-react/insert.php", dataToSend)
       .then((result) => {
         console.log(result.data);
-        alert(result.data.status + "\n" + result.data.message);
+        // alert(result.data.status + "\n" + result.data.message);
 
         // Navigate to /data and pass the data as state
         navigate("/data", { state: dataToSend });
