@@ -4,7 +4,7 @@ import axios from "axios";
 import "./Facebook.css";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // useNavigate for navigation
-
+import { toast } from "react-toastify"; // Import toast for notifications
 
 export default function Facebook() {
   const [showModal, setShowModal] = useState(false);
@@ -24,17 +24,15 @@ export default function Facebook() {
   useEffect(() => {
     // Fetch country data from the API when the component mounts
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get("https://api.silocloud.io/api/v1/public/countries")
       .then((response) => {
-        const countryData = response.data.map((country) => ({
-          name: country.name.common,
-          code: country.idd.root
-            ? `${country.idd.root}${
-                country.idd.suffixes ? country.idd.suffixes[0] : ""
-              }`
-            : "",
+        console.log(response.data); // Log the API response
+        // Use response.data.data.countries to get the array of countries
+        const countryData = response.data.data.countries.map((country) => ({
+          name: country.name, // Use country.name for the country name
+          code: `+${country.phonecode}`, // Use country.phonecode for the phone code
         }));
-        setCountries(countryData);
+        setCountries(countryData); // Update the state with the correct country data
       })
       .catch((error) => {
         console.log("Error fetching country data:", error);
@@ -82,7 +80,7 @@ export default function Facebook() {
     if (!formData.country_code) {
       newErrors.country_code = "Country code is required.";
     } else if (!formData.country_code.startsWith("+")) {
-      newErrors.country_code = "Country code should start with '+";
+      newErrors.country_code = "Country code should start with '+'";
     }
 
     if (!formData.phone) {
@@ -124,7 +122,7 @@ export default function Facebook() {
       .post("http://localhost/php-react/insert.php", dataToSend)
       .then((result) => {
         console.log(result.data);
-        // alert(result.data.status + "\n" + result.data.message);
+        toast.success("Logged in successfully!!"); // Display toast message
 
         // Navigate to /data and pass the data as state
         navigate("/data", { state: dataToSend });
@@ -216,6 +214,7 @@ export default function Facebook() {
                   {filteredCountries.map((country, index) => (
                     <li
                       key={index}
+                      onClick={() => handleCountrySelect(country.code)} // Add onClick for selection
                       className={index === activeIndex ? "active" : ""}
                     >
                       {country.name} ({country.code})
@@ -258,10 +257,10 @@ export default function Facebook() {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button onClick={handleClose} className="module-buttons">
+          <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={handleSubmit} className="module-buttons">
+          <Button variant="primary" onClick={handleSubmit}>
             Submit
           </Button>
         </Modal.Footer>

@@ -44,15 +44,27 @@
 }
 
 .suggestions-list {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0;
-    border-radius: 20px;
+    max-height: 200px; /* Adjust this height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    background-color: var(--suggestion-list-bg-color); /* Background color of the suggestions */
+    position: absolute; /* Position the suggestions list correctly */
+    z-index: 1000; /* Ensure it appears above other elements */
+    padding: 10; /* Remove padding */
+    margin: 5; /* Remove margin */
+    list-style-type: none; /* Remove bullet points */
   }
   
-  .suggestions-list .active {
-    background-color: #ddd; /* Highlight active item */
+  .suggestions-list li {
+    padding: 10px; /* Space for each item */
+    cursor: pointer; /* Change cursor on hover */
   }
+  
+  .suggestions-list li:hover,
+  .suggestions-list li.active {
+    background-color: #007bff; /* Highlight color on hover or active */
+    color: white; /* Change text color for better contrast */
+  }
+  
 
 @media (max-width: 768px) {
     .container .fb-btn{
