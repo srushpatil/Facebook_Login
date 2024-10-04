@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './Phpsignupform.css';
-import { FaUsers } from "react-icons/fa";
-import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
-import { IoIosMail } from "react-icons/io";
-import { FaRegFileCode } from "react-icons/fa6";
-import { FaPhoneAlt } from "react-icons/fa";
+import React, { useState } from "react";
+import axios from "axios";
+import "./Phpsignupform.css";
+import Facebook from "../FacebookLogin/Facebook";
+import { PiUserListFill } from "react-icons/pi";
+import { FaUser } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { FaFileCode } from "react-icons/fa";
+import { FaPhone } from "react-icons/fa6";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function Php_signupform() {
+export default function Phpsignupform() {
   const [data, setData] = useState({
     first_name: "",
     last_name: "",
-    user_name: "", 
+    user_name: "",
     email: "",
     country_code: "",
-    phone: ""
-    // password: ""
+    phone: "",
   });
 
   const [errors, setErrors] = useState({}); // State for error messages
+  const [hasErrors, setHasErrors] = useState(false); // Track whether validation errors exist
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value }); // Update form data
@@ -27,28 +30,48 @@ export default function Php_signupform() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!data.first_name) newErrors.first_name = "First name is required.";
-    if (!data.last_name) newErrors.last_name = "Last name is required.";
-    if (!data.user_name) newErrors.user_name = "Username is required.";
+    let hasValidationError = false;
+
+    if (!data.first_name) {
+      newErrors.first_name = "First name is required.";
+      hasValidationError = true;
+    }
+    if (!data.last_name) {
+      newErrors.last_name = "Last name is required.";
+      hasValidationError = true;
+    }
+    if (!data.user_name) {
+      newErrors.user_name = "Username is required.";
+      hasValidationError = true;
+    }
 
     if (!data.email) {
       newErrors.email = "Email is required.";
+      hasValidationError = true;
     } else if (!/\S+@\S+\.\S+/.test(data.email)) {
       newErrors.email = "Email is invalid.";
+      hasValidationError = true;
     }
 
     if (!data.country_code) {
       newErrors.country_code = "Country code is required.";
-    }else if(!data.country_code.startsWith('+')){
+      hasValidationError = true;
+    } else if (!data.country_code.startsWith("+")) {
       newErrors.country_code = "Country code must start with '+'.";
+      hasValidationError = true;
     }
 
-    if (!data.phone){
+    if (!data.phone) {
       newErrors.phone = "Phone number is required.";
-    }else if(data.phone.length < 10 || data.phone.length > 10){
-      newErrors.phone = "Phone number should contain 10 digits only"
+      hasValidationError = true;
+    } else if (data.phone.length < 10 || data.phone.length > 10) {
+      newErrors.phone = "Phone number should contain 10 digits only";
+      hasValidationError = true;
     }
-    
+
+    // Update state based on validation result
+    setHasErrors(hasValidationError);
+
     return newErrors;
   };
 
@@ -58,7 +81,7 @@ export default function Php_signupform() {
     const validationErrors = validateForm(); // Validate form
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors); // Set error messages
-      return; // Stop form submission
+      return; // Stop form submission if there are validation errors
     }
 
     const sendData = {
@@ -67,117 +90,189 @@ export default function Php_signupform() {
       user_name: data.user_name,
       email: data.email,
       country_code: data.country_code,
-      phone: data.phone
-      // password: data.password
+      phone: data.phone,
     };
-    console.log(sendData);
 
-    axios.post('http://localhost/php-react/insert.php', sendData)
+    // Step 1: Check if the email already exists using check_user.php
+    axios
+      .post("http://localhost/php-react/check_user.php", { email: data.email })
       .then((result) => {
-        console.log(result);
-        alert(result.data.status + "\n" + result.data.message);
+        if (result.data.exists) {
+          // Email already exists, show error toast
+          toast.error(result.data.message);
+        } else {
+          // Step 2: Email is available, proceed to create the new account
+          axios
+            .post("http://localhost/php-react/insert.php", sendData)
+            .then((insertResult) => {
+              if (insertResult.data.status === "Valid") {
+                toast.success(insertResult.data.message); // Show success toast
+              } else {
+                toast.error(insertResult.data.message); // Show error toast
+              }
+            })
+            .catch((error) => {
+              toast.error("An error occurred. Please try again.");
+            });
+        }
+      })
+      .catch((error) => {
+        toast.error(
+          "An error occurred while checking the email. Please try again."
+        );
       });
   };
 
   return (
     <>
-      <div className="container">
-        <FaUsers className='user-icon' />
-        <form className='container w-55 form-container' onSubmit={submitForm}>   
+      <div className="container-fluid">
+        {/* Add 'scrollable-form' class conditionally if there are errors */}
+        <form
+          className={`form-wrapper w-100 ${hasErrors ? "scrollable-form" : ""}`}
+        >
+          <div className="row">
+            <div className="col-md-6">
+              <div className="mb-3">
+                <label className="form-label">
+                  <PiUserListFill className="label-icons" />
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter first name"
+                  name="first_name"
+                  onChange={handleChange}
+                  value={data.first_name || ""}
+                />
+                {errors.first_name && (
+                  <small className="text-danger">{errors.first_name}</small>
+                )}
+              </div>
+            </div>
 
-          <div className="form-floating mt-5">
-            <input
-              type="text"
-              name='first_name'
-              className="form-control"
-              placeholder="Firstname"
-              onChange={handleChange}
-              value={data.first_name || ""}
-            />
-            <label><MdOutlineDriveFileRenameOutline className='form-ip-icons'/>First name</label>
-            {errors.first_name && <small className="text-danger">{errors.first_name}</small>}
+            <div className="col-md-6">
+              <div className="mb-3">
+                <label className="form-label">
+                  <PiUserListFill className="label-icons" />
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter last name"
+                  name="last_name"
+                  onChange={handleChange}
+                  value={data.last_name || ""}
+                />
+                {errors.last_name && (
+                  <small className="text-danger">{errors.last_name}</small>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="form-floating mt-3">
+          <div className="mb-3">
+            <label className="form-label">
+              <FaUser className="label-icons" style={{ fontSize: "18px" }} />
+              User Name
+            </label>
             <input
               type="text"
-              name='last_name'
               className="form-control"
-              placeholder="Lastname"
-              onChange={handleChange}
-              value={data.last_name || ""}
-            />
-            <label><MdOutlineDriveFileRenameOutline className='form-ip-icons'/>Last name</label>
-            {errors.last_name && <small className="text-danger">{errors.last_name}</small>}
-          </div>
-
-          <div className="form-floating mt-3">
-            <input
-              type="text"
-              name='user_name'
-              className="form-control"
-              placeholder="Username"
+              placeholder="Enter user name"
+              name="user_name"
               onChange={handleChange}
               value={data.user_name || ""}
             />
-            <label><MdOutlineDriveFileRenameOutline className='form-ip-icons'/>User name</label>
-            {errors.user_name && <small className="text-danger">{errors.user_name}</small>}
+            {errors.user_name && (
+              <small className="text-danger">{errors.user_name}</small>
+            )}
           </div>
 
-          <div className="form-floating mt-3">
+          <div className="mb-3">
+            <label className="form-label">
+              <MdEmail className="label-icons" />
+              Email
+            </label>
             <input
-              type="email"
-              name='email'
+              type="text"
               className="form-control"
-              placeholder="Email"
+              placeholder="Enter email"
+              name="email"
               onChange={handleChange}
               value={data.email || ""}
             />
-            <label><IoIosMail className='form-ip-icons'/>Email</label>
-            {errors.email && <small className="text-danger">{errors.email}</small>}
+            {errors.email && (
+              <small className="text-danger">{errors.email}</small>
+            )}
           </div>
 
-          <div className="form-floating mt-3">
+          <div className="mb-3">
+            <label className="form-label">
+              <FaFileCode
+                className="label-icons"
+                style={{ fontSize: "20px" }}
+              />
+              Country Code
+            </label>
             <input
               type="text"
-              name='country_code'
               className="form-control"
-              placeholder="Country code"
+              placeholder="Enter country code"
+              name="country_code"
               onChange={handleChange}
               value={data.country_code || ""}
             />
-            <label><FaRegFileCode className='form-ip-icons' style={{height:'20px'}}/>Country code</label>
-            {errors.country_code && <small className="text-danger">{errors.country_code}</small>}
+            {errors.country_code && (
+              <small className="text-danger">{errors.country_code}</small>
+            )}
           </div>
 
-          <div className="form-floating mt-3 mb-3">
+          <div className="mb-3">
+            <label className="form-label">
+              <FaPhone className="label-icons" style={{ fontSize: "20px" }} />
+              Phone
+            </label>
             <input
-              type="tel"
-              name='phone'
+              type="text"
               className="form-control"
-              placeholder="Phone number"
+              placeholder="Enter phone number"
+              name="phone"
               onChange={handleChange}
               value={data.phone || ""}
             />
-            <label><FaPhoneAlt className='form-ip-icons' style={{height:'20px'}}/>Phone number</label>
-            {errors.phone && <small className="text-danger">{errors.phone}</small>}
+            {errors.phone && (
+              <small className="text-danger">{errors.phone}</small>
+            )}
           </div>
 
-          {/* <div className="form-floating mb-3">
-            <input
-              type="password"
-              name='password'
-              className="form-control"
-              placeholder="password"
-              onChange={handleChange}
-              value={data.password || ""}
-            />
-            <label>password</label>
-            {errors.password && <small className="text-danger">{errors.password}</small>}
-          </div> */}
-
-          <button type="submit" className="btn btn-primary btn-lg submit">CREATE NEW ACCOUNT</button>
+          <div className="d-flex justify-content-center submit">
+            <button
+              type="submit"
+              className="btn btn-primary btn-submit"
+              onClick={submitForm}
+            >
+              Create new Account
+            </button>
+          </div>
         </form>
+
+        <div className="row ">
+          <h4
+            style={{
+              textAlign: "center",
+              marginTop: "16px",
+              fontWeight: "bold",
+            }}
+          >
+            OR
+          </h4>
+          <div className="col-12 text-center" style={{ marginTop: "-35px" }}>
+            <Facebook />
+          </div>
+        </div>
+        <ToastContainer />
       </div>
     </>
   );

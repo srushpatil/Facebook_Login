@@ -4,12 +4,12 @@ import Navbar from "../Navbar/Navbar";
 import './DisplayData.css';
 
 export default function DisplayData() {
-  const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch user data from sessionStorage or from location state
-  const sessionData = JSON.parse(sessionStorage.getItem("userSession"));
-  const { state } = location;
+  // Fetch user data from sessionStorage
+  const sessionData = sessionStorage.getItem("userSession") 
+    ? JSON.parse(sessionStorage.getItem("userSession")) 
+    : null;
 
   useEffect(() => {
     // If no session data, redirect to home
