@@ -1,15 +1,22 @@
 import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import './DisplayData.css';
+// import { ToastContainer, toast } from "react-toastify";
+
 
 export default function DisplayData() {
+  // if necessary then only show 
+  // useEffect(() => {
+  //   // Show toast message when the component mounts
+  //   toast.success("Logged in! Welcome.");
+  // }, []); // Empty dependency array means this runs once when the component mounts
+
+
   const navigate = useNavigate();
 
-  // Fetch user data from sessionStorage
-  const sessionData = sessionStorage.getItem("userSession") 
-    ? JSON.parse(sessionStorage.getItem("userSession")) 
-    : null;
+  // Fetch user data from sessionStorage or from location state
+  const sessionData = JSON.parse(sessionStorage.getItem("userSession"));
 
   useEffect(() => {
     // If no session data, redirect to home
@@ -28,7 +35,6 @@ export default function DisplayData() {
   if (!sessionData) {
     return <h2>No data available! Please log in first.</h2>;
   }
-
   return (
     <>
       <Navbar />
@@ -45,6 +51,8 @@ export default function DisplayData() {
 
         <button className="btn btn-danger btn-lg mt-5" onClick={handleLogout}>Log Out</button>
       </div>
+      {/* Include ToastContainer */}
+      {/* <ToastContainer /> */}
     </>
   );
 }

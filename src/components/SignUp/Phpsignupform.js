@@ -8,7 +8,6 @@ import { MdEmail } from "react-icons/md";
 import { FaFileCode } from "react-icons/fa";
 import { FaPhone } from "react-icons/fa6";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function Phpsignupform() {
   const [data, setData] = useState({
@@ -81,7 +80,7 @@ export default function Phpsignupform() {
     const validationErrors = validateForm(); // Validate form
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors); // Set error messages
-      return; // Stop form submission if there are validation errors
+      return; // Stop form submission
     }
 
     const sendData = {
@@ -92,36 +91,22 @@ export default function Phpsignupform() {
       country_code: data.country_code,
       phone: data.phone,
     };
+    console.log(sendData);
 
-    // Step 1: Check if the email already exists using check_user.php
-    axios
-      .post("http://localhost/php-react/check_user.php", { email: data.email })
-      .then((result) => {
-        if (result.data.exists) {
-          // Email already exists, show error toast
-          toast.error(result.data.message);
-        } else {
-          // Step 2: Email is available, proceed to create the new account
-          axios
-            .post("http://localhost/php-react/insert.php", sendData)
-            .then((insertResult) => {
-              if (insertResult.data.status === "Valid") {
-                toast.success(insertResult.data.message); // Show success toast
-              } else {
-                toast.error(insertResult.data.message); // Show error toast
-              }
-            })
-            .catch((error) => {
-              toast.error("An error occurred. Please try again.");
-            });
-        }
-      })
-      .catch((error) => {
-        toast.error(
-          "An error occurred while checking the email. Please try again."
-        );
-      });
-  };
+axios
+  .post("http://localhost/php-react/insert.php", sendData)
+  .then((result) => {
+    console.log(result);
+    if (result.data.status === "Valid") {
+      toast.success(result.data.message); // Show success toast
+    } else {
+      toast.error(result.data.message); // Show error toast
+    }
+  })
+  .catch((error) => {
+    toast.error("An error occurred. Please try again.");
+  });
+  }
 
   return (
     <>
@@ -133,10 +118,7 @@ export default function Phpsignupform() {
           <div className="row">
             <div className="col-md-6">
               <div className="mb-3">
-                <label className="form-label">
-                  <PiUserListFill className="label-icons" />
-                  First Name
-                </label>
+                <label className="form-label"><PiUserListFill className="label-icons"/>First Name</label>
                 <input
                   type="text"
                   className="form-control"
@@ -153,10 +135,7 @@ export default function Phpsignupform() {
 
             <div className="col-md-6">
               <div className="mb-3">
-                <label className="form-label">
-                  <PiUserListFill className="label-icons" />
-                  Last Name
-                </label>
+                <label className="form-label"><PiUserListFill className="label-icons"/>Last Name</label>
                 <input
                   type="text"
                   className="form-control"
@@ -173,10 +152,7 @@ export default function Phpsignupform() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">
-              <FaUser className="label-icons" style={{ fontSize: "18px" }} />
-              User Name
-            </label>
+            <label className="form-label"><FaUser className="label-icons" style={{fontSize:'18px'}}/>User Name</label>
             <input
               type="text"
               className="form-control"
@@ -191,10 +167,7 @@ export default function Phpsignupform() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">
-              <MdEmail className="label-icons" />
-              Email
-            </label>
+            <label className="form-label"><MdEmail className="label-icons"/>Email</label>
             <input
               type="text"
               className="form-control"
@@ -209,13 +182,7 @@ export default function Phpsignupform() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">
-              <FaFileCode
-                className="label-icons"
-                style={{ fontSize: "20px" }}
-              />
-              Country Code
-            </label>
+            <label className="form-label"><FaFileCode className="label-icons" style={{fontSize:'20px'}}/>Country Code</label>
             <input
               type="text"
               className="form-control"
@@ -230,10 +197,7 @@ export default function Phpsignupform() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">
-              <FaPhone className="label-icons" style={{ fontSize: "20px" }} />
-              Phone
-            </label>
+            <label className="form-label"><FaPhone className="label-icons" style={{fontSize:'20px'}}/>Phone</label>
             <input
               type="text"
               className="form-control"
@@ -251,28 +215,19 @@ export default function Phpsignupform() {
             <button
               type="submit"
               className="btn btn-primary btn-submit"
-              onClick={submitForm}
-            >
+              onClick={submitForm}>
               Create new Account
             </button>
           </div>
         </form>
 
         <div className="row ">
-          <h4
-            style={{
-              textAlign: "center",
-              marginTop: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            OR
-          </h4>
-          <div className="col-12 text-center" style={{ marginTop: "-35px" }}>
+            <h4 style={{ textAlign: "center", marginTop:'16px', fontWeight:'bold'}}>OR</h4>
+          <div className="col-12 text-center" style={{marginTop:'-35px'}}>
             <Facebook />
           </div>
         </div>
-        <ToastContainer />
+        <ToastContainer/>
       </div>
     </>
   );

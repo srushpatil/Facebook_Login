@@ -5,6 +5,9 @@ import "./Facebook.css";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // useNavigate for navigation
 
+
+
+
 export default function Facebook() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -90,6 +93,7 @@ export default function Facebook() {
       if (response.accessToken) {
           console.log("Logged in successfully", response);
           setFacebookData(response); // Save Facebook data
+
           // Only call checkUserExist if facebookData is valid and contains an email
           if (response.email) {
               checkUserExist(response.email); // Pass the email directly
@@ -118,7 +122,7 @@ export default function Facebook() {
   
           // Store session data if user already exists
           sessionStorage.setItem("userSession", JSON.stringify(result.data.userData));
-  
+
           // Navigate to /data page and pass the user data as state
           navigate("/data", { state: result.data.userData }); // Pass user data directly
         } else {
@@ -141,6 +145,8 @@ export default function Facebook() {
         icon="fa-facebook"
         cssClass="fb-btn"
       />
+
+     
 
       {/* Modal for input */}
       <Modal show={showModal} onHide={handleClose} >
@@ -206,6 +212,7 @@ export default function Facebook() {
           </Button>
         </Modal.Footer>
       </Modal>
+
     </div>
   );
 }
