@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FacebookLogin from "react-facebook-login";
 import axios from "axios";
 import "./Facebook.css";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // useNavigate for navigation
-
-
-
 
 export default function Facebook() {
   const [showModal, setShowModal] = useState(false);
@@ -14,37 +11,87 @@ export default function Facebook() {
     country_code: "",
     phone: "",
     user_name: "",
-    // password: ""
   });
   const [facebookData, setFacebookData] = useState(null);
-  const [errors, setErrors] = useState({}); // State to track validation errors
+  const [errors, setErrors] = useState({});
+  const [countries, setCountries] = useState([]); // State to store country data
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(-1); // Track active index for keyboard navigation
+
   const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    // Fetch country data from the API when the component mounts
+    axios
+      .get("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        const countryData = response.data.map((country) => ({
+          name: country.name.common,
+          code: country.idd.root
+            ? `${country.idd.root}${
+                country.idd.suffixes ? country.idd.suffixes[0] : ""
+              }`
+            : "",
+        }));
+        setCountries(countryData);
+      })
+      .catch((error) => {
+        console.log("Error fetching country data:", error);
+      });
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: "" }); // Clear error for specific field on change
+
+    // Filter countries based on input
+    const filtered = countries.filter(
+      (country) =>
+        country.code.startsWith(value) ||
+        country.name.toLowerCase().startsWith(value.toLowerCase())
+    );
+    setFilteredCountries(filtered);
+    setActiveIndex(-1); // Reset the active index on new input
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      setActiveIndex((prevIndex) =>
+        prevIndex < filteredCountries.length - 1 ? prevIndex + 1 : prevIndex
+      );
+    } else if (e.key === "ArrowUp") {
+      setActiveIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : prevIndex
+      );
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      handleCountrySelect(filteredCountries[activeIndex].code);
+    }
+  };
+
+  const handleCountrySelect = (code) => {
+    setFormData({ ...formData, country_code: code });
+    setFilteredCountries([]); // Clear suggestions after selection
   };
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
 
   const validateForm = () => {
-        const newErrors = {};
-        if (!formData.country_code) {
-          newErrors.country_code = "Country code is required.";
-        } else if (!formData.country_code.startsWith("+")) {
-          newErrors.country_code = "Country code should start with '+";
-        }
+    const newErrors = {};
+    if (!formData.country_code) {
+      newErrors.country_code = "Country code is required.";
+    } else if (!formData.country_code.startsWith("+")) {
+      newErrors.country_code = "Country code should start with '+";
+    }
 
-        if (!formData.phone) {
-          newErrors.phone = "Phone number is required.";
-        } else if (formData.phone.length !== 10) {
-          newErrors.phone = "Phone number must be exactly 10 digits.";
-        }
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required.";
+    } else if (formData.phone.length !== 10) {
+      newErrors.phone = "Phone number must be exactly 10 digits.";
+    }
 
-        if (!formData.user_name) newErrors.user_name = "Username is required.";
-        return newErrors;
+    if (!formData.user_name) newErrors.user_name = "Username is required.";
+    return newErrors;
   };
 
   const handleSubmit = () => {
@@ -53,12 +100,12 @@ export default function Facebook() {
       setErrors(validationErrors); // Set error messages
       return; // Stop form submission if there are errors
     }
-  
+
     // Prepare the data to send to PHP
     const nameArr = facebookData.name.split(" ");
     const firstname = nameArr[0] ? nameArr[0] : null;
     const lastname = nameArr.length > 1 ? nameArr[1] : null;
-  
+
     const dataToSend = {
       first_name: firstname,
       last_name: lastname,
@@ -67,66 +114,62 @@ export default function Facebook() {
       country_code: formData.country_code,
       phone: formData.phone,
     };
-  
+
     // Store session data after successful form submission
     sessionStorage.setItem("userSession", JSON.stringify(dataToSend));
-  
+
     // Send data to PHP
     axios
       .post("http://localhost/php-react/insert.php", dataToSend)
       .then((result) => {
         console.log(result.data);
         alert(result.data.status + "\n" + result.data.message);
-  
+
         // Navigate to /data and pass the data as state
         navigate("/data", { state: dataToSend });
       })
       .catch((error) => {
         console.log("Error sending data", error);
       });
-  
+
     handleClose(); // Close the modal after submission
   };
 
   const responseFacebook = (response) => {
-      console.log("In responseFacebook callback");
-      if (response.accessToken) {
-          console.log("Logged in successfully", response);
-          setFacebookData(response); // Save Facebook data
+    console.log("In responseFacebook callback");
+    if (response.accessToken) {
+      console.log("Logged in successfully", response);
+      setFacebookData(response); // Save Facebook data
 
-          // Only call checkUserExist if facebookData is valid and contains an email
-          if (response.email) {
-              checkUserExist(response.email); // Pass the email directly
-          } else {
-              console.log("Email not found in response");
-              handleShow(); // Show modal or handle case where email is missing
-          }
+      if (response.email) {
+        checkUserExist(response.email); // Pass the email directly
       } else {
-          console.log("Login Failed", response); // Handle login failure
+        console.log("Email not found in response");
+        handleShow(); // Show modal or handle case where email is missing
       }
+    } else {
+      console.log("Login Failed", response); // Handle login failure
+    }
   };
 
   const checkUserExist = (email) => {
     console.log("Checking if user exists with email:", email);
     const dataToSend = {
-      email: email, // Use the email passed to this function
+      email: email,
     };
-  
+
     axios
       .post("http://localhost/php-react/check_user.php", dataToSend)
       .then((result) => {
         console.log(result.data);
         if (result.data.exists) {
-          // User exists
           console.log("User exists:", result.data.userData);
-  
-          // Store session data if user already exists
-          sessionStorage.setItem("userSession", JSON.stringify(result.data.userData));
-
-          // Navigate to /data page and pass the user data as state
-          navigate("/data", { state: result.data.userData }); // Pass user data directly
+          sessionStorage.setItem(
+            "userSession",
+            JSON.stringify(result.data.userData)
+          );
+          navigate("/data", { state: result.data.userData });
         } else {
-          // User does not exist
           handleShow(); // Show modal for additional details
         }
       })
@@ -146,33 +189,43 @@ export default function Facebook() {
         cssClass="fb-btn"
       />
 
-     
-
       {/* Modal for input */}
-      <Modal show={showModal} onHide={handleClose} >
+      <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton className="popup-form">
           <Modal.Title>Please Enter Additional Details!</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="popup-form-body">
           <Form className="popup-content">
-            <Form.Group className="mb-3 ">
-              <Form.Label style={{fontSize:'18px'}}>Country Code</Form.Label>
+            {/* Country code input with suggestions */}
+            <Form.Group className="mb-3">
+              <Form.Label style={{ fontSize: "18px" }}>Country Code</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter country code"
                 name="country_code"
                 value={formData.country_code}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown} // Capture key events
                 className="ip-details"
+                autoComplete="off"
               />
-              {errors.country_code && (
-                <small className="text-danger">{errors.country_code}</small>
+              {filteredCountries.length > 0 && (
+                <ul className="suggestions-list">
+                  {filteredCountries.map((country, index) => (
+                    <li
+                      key={index}
+                      className={index === activeIndex ? "active" : ""}
+                    >
+                      {country.name} ({country.code})
+                    </li>
+                  ))}
+                </ul>
               )}
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label  style={{fontSize:'18px'}}>Phone Number</Form.Label>
+              <Form.Label style={{ fontSize: "18px" }}>Phone Number</Form.Label>
               <Form.Control
                 type="tel"
                 placeholder="Enter phone number"
@@ -187,7 +240,7 @@ export default function Facebook() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label  style={{fontSize:'18px'}}>User Name</Form.Label>
+              <Form.Label style={{ fontSize: "18px" }}>User Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter user name"
@@ -212,7 +265,6 @@ export default function Facebook() {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 }

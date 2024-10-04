@@ -43,6 +43,16 @@
     font-size: 13px;
 }
 
+.suggestions-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  
+  .suggestions-list .active {
+    background-color: #ddd; /* Highlight active item */
+  }
+
 @media (max-width: 768px) {
     .container .fb-btn{
         margin-bottom: 0;

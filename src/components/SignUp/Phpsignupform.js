@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Phpsignupform.css";
 import Facebook from "../FacebookLogin/Facebook";
@@ -22,9 +22,42 @@ export default function Phpsignupform() {
   const [errors, setErrors] = useState({}); // State for error messages
   const [hasErrors, setHasErrors] = useState(false); // Track whether validation errors exist
 
+  const [countryCodes, setCountryCodes] = useState([]); // State to store country codes
+  const [suggestions, setSuggestions] = useState([]); // State to hold filtered suggestions
+
+  useEffect(() => {
+    // Fetch the country codes using the Rest Countries API
+    axios
+      .get("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        const countries = response.data.map((country) => ({
+          name: country.name.common,
+          dial_code: country.idd.root ? country.idd.root + (country.idd.suffixes ? country.idd.suffixes[0] : "") : "",
+        })).filter((country) => country.dial_code); // Filter countries with valid dial codes
+        setCountryCodes(countries); // Set the fetched country codes
+      })
+      .catch((error) => {
+        console.error("Error fetching country codes:", error);
+      });
+  }, []);
+
   const handleChange = (e) => {
-    setData({ ...data, [e.target.name]: e.target.value }); // Update form data
-    setErrors({ ...errors, [e.target.name]: "" }); // Clear error for the specific field
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+    setErrors({ ...errors, [name]: "" });
+
+    if (name === "country_code") {
+      // Filter country codes based on user input
+      const filteredSuggestions = countryCodes.filter((country) =>
+        country.dial_code.startsWith(value) || country.name.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions); // Set filtered suggestions
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setData({ ...data, country_code: suggestion.dial_code }); // Set country code on suggestion click
+    setSuggestions([]); // Clear suggestions
   };
 
   const validateForm = () => {
@@ -63,14 +96,13 @@ export default function Phpsignupform() {
     if (!data.phone) {
       newErrors.phone = "Phone number is required.";
       hasValidationError = true;
-    } else if (data.phone.length < 10 || data.phone.length > 10) {
-      newErrors.phone = "Phone number should contain 10 digits only";
+    } else if (data.phone.length !== 10) {
+      newErrors.phone = "Phone number should contain 10 digits only.";
       hasValidationError = true;
     }
 
     // Update state based on validation result
     setHasErrors(hasValidationError);
-
     return newErrors;
   };
 
@@ -91,22 +123,21 @@ export default function Phpsignupform() {
       country_code: data.country_code,
       phone: data.phone,
     };
-    console.log(sendData);
 
-axios
-  .post("http://localhost/php-react/insert.php", sendData)
-  .then((result) => {
-    console.log(result);
-    if (result.data.status === "Valid") {
-      toast.success(result.data.message); // Show success toast
-    } else {
-      toast.error(result.data.message); // Show error toast
-    }
-  })
-  .catch((error) => {
-    toast.error("An error occurred. Please try again.");
-  });
-  }
+    axios
+      .post("http://localhost/php-react/insert.php", sendData)
+      .then((result) => {
+        console.log(result);
+        if (result.data.status === "Valid") {
+          toast.success(result.data.message); // Show success toast
+        } else {
+          toast.error(result.data.message); // Show error toast
+        }
+      })
+      .catch((error) => {
+        toast.error("An error occurred. Please try again.");
+      });
+  };
 
   return (
     <>
@@ -118,7 +149,10 @@ axios
           <div className="row">
             <div className="col-md-6">
               <div className="mb-3">
-                <label className="form-label"><PiUserListFill className="label-icons"/>First Name</label>
+                <label className="form-label">
+                  <PiUserListFill className="label-icons" />
+                  First Name
+                </label>
                 <input
                   type="text"
                   className="form-control"
@@ -135,7 +169,10 @@ axios
 
             <div className="col-md-6">
               <div className="mb-3">
-                <label className="form-label"><PiUserListFill className="label-icons"/>Last Name</label>
+                <label className="form-label">
+                  <PiUserListFill className="label-icons" />
+                  Last Name
+                </label>
                 <input
                   type="text"
                   className="form-control"
@@ -152,7 +189,10 @@ axios
           </div>
 
           <div className="mb-3">
-            <label className="form-label"><FaUser className="label-icons" style={{fontSize:'18px'}}/>User Name</label>
+            <label className="form-label">
+              <FaUser className="label-icons" style={{ fontSize: "18px" }} />
+              User Name
+            </label>
             <input
               type="text"
               className="form-control"
@@ -167,7 +207,10 @@ axios
           </div>
 
           <div className="mb-3">
-            <label className="form-label"><MdEmail className="label-icons"/>Email</label>
+            <label className="form-label">
+              <MdEmail className="label-icons" />
+              Email
+            </label>
             <input
               type="text"
               className="form-control"
@@ -182,7 +225,10 @@ axios
           </div>
 
           <div className="mb-3">
-            <label className="form-label"><FaFileCode className="label-icons" style={{fontSize:'20px'}}/>Country Code</label>
+            <label className="form-label">
+              <FaFileCode className="label-icons" style={{ fontSize: "20px" }} />
+              Country Code
+            </label>
             <input
               type="text"
               className="form-control"
@@ -194,10 +240,27 @@ axios
             {errors.country_code && (
               <small className="text-danger">{errors.country_code}</small>
             )}
+            {/* Suggestions dropdown */}
+            {suggestions.length > 0 && (
+              <ul className="list-group suggestions-list">
+                {suggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="list-group-item"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion.name} ({suggestion.dial_code})
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="mb-3">
-            <label className="form-label"><FaPhone className="label-icons" style={{fontSize:'20px'}}/>Phone</label>
+            <label className="form-label">
+              <FaPhone className="label-icons" style={{ fontSize: "20px" }} />
+              Phone
+            </label>
             <input
               type="text"
               className="form-control"
@@ -225,9 +288,9 @@ axios
             <h4 style={{ textAlign: "center", marginTop:'16px', fontWeight:'bold'}}>OR</h4>
           <div className="col-12 text-center" style={{marginTop:'-35px'}}>
             <Facebook />
-          </div>
-        </div>
-        <ToastContainer/>
+            </div>
+            </div>
+            <ToastContainer/>
       </div>
     </>
   );

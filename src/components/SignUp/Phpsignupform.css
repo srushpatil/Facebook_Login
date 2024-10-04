@@ -49,7 +49,6 @@
   margin-left: 40px;
 }
 
-
   /* Additional scroll styles for smaller devices */
   @media (max-width: 768px) {
     .form-wrapper {
