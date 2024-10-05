@@ -34,8 +34,8 @@
 }
 
 .module-buttons{
-    background: var(--linear-grad-color);
-    border: 1px solid var(--linear-grad-color);
+    background: var(--fb-button-color);
+    border: 1px solid var(--fb-button-color);
     padding: 10px;
 }
 

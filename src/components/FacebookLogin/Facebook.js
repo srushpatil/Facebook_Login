@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FacebookLogin from "react-facebook-login";
 import axios from "axios";
 import "./Facebook.css";
@@ -20,6 +20,8 @@ export default function Facebook() {
   const [activeIndex, setActiveIndex] = useState(-1); // Track active index for keyboard navigation
 
   const navigate = useNavigate(); // Initialize useNavigate
+
+  const suggestionRefs = useRef([]); //Ref to track suggesstions
 
   useEffect(() => {
     // Fetch country data from the API when the component mounts
@@ -53,6 +55,7 @@ export default function Facebook() {
     setActiveIndex(-1); // Reset the active index on new input
   };
 
+ 
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
       setActiveIndex((prevIndex) =>
@@ -66,6 +69,16 @@ export default function Facebook() {
       handleCountrySelect(filteredCountries[activeIndex].code);
     }
   };
+
+  useEffect(() => {
+    // Scroll the active item into view
+    if (activeIndex >= 0 && suggestionRefs.current[activeIndex]) {
+      suggestionRefs.current[activeIndex].scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [activeIndex]);
 
   const handleCountrySelect = (code) => {
     setFormData({ ...formData, country_code: code });
@@ -214,7 +227,8 @@ export default function Facebook() {
                   {filteredCountries.map((country, index) => (
                     <li
                       key={index}
-                      onClick={() => handleCountrySelect(country.code)} // Add onClick for selection
+                      ref={(el) => (suggestionRefs.current[index] = el)} // Set ref to each suggestion
+                      onClick={() => handleCountrySelect(country.code)}
                       className={index === activeIndex ? "active" : ""}
                     >
                       {country.name} ({country.code})
