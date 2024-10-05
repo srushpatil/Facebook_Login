@@ -42,16 +42,36 @@
 ::placeholder{
     font-size: 13px;
 }
-
-.suggestions-list {
+.suggestions-wrapper {
+    position: relative; /* Allow absolute positioning for children */
+  }
+  
+  /* Suggestion list styling */
+  .suggestions-list {
     max-height: 200px; /* Adjust this height as needed */
     overflow-y: auto; /* Enable vertical scrolling */
     background-color: var(--suggestion-list-bg-color); /* Background color of the suggestions */
-    position: absolute; /* Position the suggestions list correctly */
+    position: relative; /* Changed to relative to allow the close button to position correctly */
     z-index: 1000; /* Ensure it appears above other elements */
-    padding: 10; /* Remove padding */
-    margin: 5; /* Remove margin */
+    padding: 10px; /* Added padding */
+    margin: 5px; /* Added margin */
     list-style-type: none; /* Remove bullet points */
+  }
+  
+  /* Close button styling */
+  .close-suggestions {
+    position: absolute; /* Keep it absolute for positioning within the wrapper */
+    top: -10px; /* Position it within the suggestions list */
+    right: 30px; /* Position it in the corner */
+    font-size: 30px;
+    font-weight: bold;
+    color: red;
+    cursor: pointer;
+    z-index: 1001; /* Ensure it appears above the suggestion list */
+  }
+  
+  .close-suggestions:hover {
+    color: darkred; /* Change color on hover */
   }
   
   .suggestions-list li {
@@ -64,6 +84,7 @@
     background-color: #007bff; /* Highlight color on hover or active */
     color: white; /* Change text color for better contrast */
   }
+  
   
 
 @media (max-width: 768px) {
