@@ -10,7 +10,7 @@ import { FaFileCode } from "react-icons/fa";
 import { FaPhone } from "react-icons/fa6";
 
 export default function Facebook() {
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+  const [showModal, setShowModal] = useState(false); // State to manage modal visibility or not
 
   const [formData, setFormData] = useState({         // State for form inputs
     country_code: "", 
