@@ -37,7 +37,7 @@ export default function Facebook() {
         }));
         setCountries(countryData); // Set country data to state
       })
-      .catch((error) => console.log("Error fetching country data:", error)); // Handle errors
+      .catch((error) => console.log("Error fetching country data:", error)); //handles errors
   }, []);
 
 
