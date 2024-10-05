@@ -246,7 +246,7 @@ export default function Facebook() {
             </Form.Group>
 
             <Button variant="primary" onClick={handleSubmit}>Submit</Button> {/* Submit button */}
-            
+
           </Form>
         </Modal.Body>
       </Modal>

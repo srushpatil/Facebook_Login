@@ -44,10 +44,10 @@
 }
 .suggestions-wrapper {
     position: relative; /* Allow absolute positioning for children */
-  }
+}
   
-  /* Suggestion list styling */
-  .suggestions-list {
+/* Suggestion list styling */
+.suggestions-list {
     max-height: 200px; /* Adjust this height as needed */
     overflow-y: auto; /* Enable vertical scrolling */
     background-color: var(--suggestion-list-bg-color); /* Background color of the suggestions */
@@ -56,10 +56,10 @@
     padding: 10px; /* Added padding */
     margin: 5px; /* Added margin */
     list-style-type: none; /* Remove bullet points */
-  }
+}
   
-  /* Close button styling */
-  .close-suggestions {
+/* Close button styling */
+.close-suggestions {
     position: absolute; /* Keep it absolute for positioning within the wrapper */
     top: -10px; /* Position it within the suggestions list */
     right: 30px; /* Position it in the corner */
@@ -68,24 +68,22 @@
     color: red;
     cursor: pointer;
     z-index: 1001; /* Ensure it appears above the suggestion list */
-  }
+}
   
-  .close-suggestions:hover {
+.close-suggestions:hover {
     color: darkred; /* Change color on hover */
-  }
+}
   
-  .suggestions-list li {
+.suggestions-list li {
     padding: 10px; /* Space for each item */
     cursor: pointer; /* Change cursor on hover */
-  }
+}
   
-  .suggestions-list li:hover,
-  .suggestions-list li.active {
+.suggestions-list li:hover,
+.suggestions-list li.active {
     background-color: #007bff; /* Highlight color on hover or active */
     color: white; /* Change text color for better contrast */
-  }
-  
-  
+}
 
 @media (max-width: 768px) {
     .container .fb-btn{
