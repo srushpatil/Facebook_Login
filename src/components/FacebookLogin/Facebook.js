@@ -9,7 +9,7 @@ import { toast } from "react-toastify"; // For displaying toast notifications
 export default function Facebook() {
   const [showModal, setShowModal] = useState(false); // State to manage modal visibility
 
-  const [formData, setFormData] = useState({                             // State for form inputs
+  const [formData, setFormData] = useState({         // State for form inputs
     country_code: "", 
     phone: "", 
     user_name: "" });
