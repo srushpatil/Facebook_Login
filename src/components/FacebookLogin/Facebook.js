@@ -19,7 +19,7 @@ export default function Facebook() {
 
   const [facebookData, setFacebookData] = useState(null); // State to store Facebook user data
   const [errors, setErrors] = useState({}); // State for form validation errors
-  const [countries, setCountries] = useState([]); // State to store country data
+  const [countries, setCountries] = useState([]); // State to store country data api all api's
   const [filteredCountries, setFilteredCountries] = useState([]); // State for filtered country suggestions
   const [activeIndex, setActiveIndex] = useState(-1); // State to track the active suggestion index
   const navigate = useNavigate(); // Hook for navigation
