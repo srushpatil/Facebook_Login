@@ -209,6 +209,7 @@ export default function Facebook() {
                 className="ip-details"
                 autoComplete="off"
               />
+              {errors.country_code && <small className="text-danger">{errors.country_code}</small>} {/* Error message for user name */}
               {/* Render country suggestions */}
               {filteredCountries.length > 0 && (
                 <div className="suggestions-wrapper">
