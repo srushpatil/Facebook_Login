@@ -5,6 +5,9 @@ import axios from "axios"; // For making HTTP requests
 import { Modal, Button, Form } from "react-bootstrap"; // Bootstrap components for UI
 import { useNavigate } from "react-router-dom"; // For navigation
 import { toast } from "react-toastify"; // For displaying toast notifications
+import { FaUser } from "react-icons/fa";
+import { FaFileCode } from "react-icons/fa";
+import { FaPhone } from "react-icons/fa6";
 
 export default function Facebook() {
   const [showModal, setShowModal] = useState(false); // State to manage modal visibility
@@ -43,14 +46,24 @@ export default function Facebook() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value }); // Update form data
 
-    // Filter countries based on input value
-    const filtered = countries.filter((country) =>
-      country.code.startsWith(value) || country.name.toLowerCase().startsWith(value.toLowerCase())
-    );
-    setFilteredCountries(filtered); // Update filtered countries
-    setActiveIndex(-1); // Reset active index for suggestions
-  };
+    // Clear the corresponding error message when the user starts typing
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", // Clear error for the field being modified
+    }));
 
+    // Filter countries only when the country_code input is being changed
+    if (name === "country_code") {
+      const filtered = countries.filter((country) =>
+        country.code.startsWith(value) || country.name.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setFilteredCountries(filtered); // Update filtered countries
+      setActiveIndex(-1); // Reset active index for suggestions
+    } else {
+      // Reset filtered countries if the username input is being changed
+      setFilteredCountries([]); // Clear suggestions if typing in username
+    }
+  };
 
   // Handle keyboard navigation for suggestions
   const handleKeyDown = (e) => {
@@ -183,7 +196,9 @@ export default function Facebook() {
             {/* Country Code Input */}
             <Form.Group className="mb-3">
 
-              <Form.Label style={{ fontSize: "18px" }}>Country Code</Form.Label>
+              <Form.Label className="label">
+                <FaFileCode className="label-icons"/>
+                Country Code</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter country code"
@@ -218,7 +233,9 @@ export default function Facebook() {
 
             {/* User Name Input */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ fontSize: "18px" }}>User Name</Form.Label>
+              <Form.Label className="label">
+                <FaUser className="label-icons" />
+                User Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter user name"
@@ -233,7 +250,9 @@ export default function Facebook() {
 
             {/* Phone Number Input */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ fontSize: "18px" }}>Phone Number</Form.Label>
+              <Form.Label className="label">
+                <FaPhone className="label-icons" />
+                Phone Number</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter phone number"
@@ -245,7 +264,7 @@ export default function Facebook() {
               {errors.phone && <small className="text-danger">{errors.phone}</small>} {/* Error message for phone number */}
             </Form.Group>
 
-            <Button variant="primary" onClick={handleSubmit}>Submit</Button> {/* Submit button */}
+            <Button variant="primary" className="submit-btn" onClick={handleSubmit}>Submit</Button> {/* Submit button */}
 
           </Form>
         </Modal.Body>

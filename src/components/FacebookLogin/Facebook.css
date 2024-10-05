@@ -25,11 +25,18 @@
     justify-content: center;
     align-items: center;
     flex-direction: column; /* If you want them stacked vertically */
+    background-color: var(--form-bg-color);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+    padding: 10px;
+
 }
 
 .popup-content .ip-details{
+    height: 45px;
+    margin-bottom: 10px;
+    background-color: rgba(219, 219, 219, 0.2) !important;
+    border: 1px solid rgba(196, 196, 196, 0.864) !important;
     border-radius: 30px;
-    border: 1px solid black;
     width: 350px;
 }
 
@@ -42,6 +49,7 @@
 ::placeholder{
     font-size: 13px;
 }
+
 .suggestions-wrapper {
     position: relative; /* Allow absolute positioning for children */
 }
@@ -84,6 +92,26 @@
     background-color: #007bff; /* Highlight color on hover or active */
     color: white; /* Change text color for better contrast */
 }
+
+.label{
+    color: var(--form-icon-label-color);
+    font-weight: bold;
+}
+
+.label-icons {
+    margin-right: 8px;
+    margin-left: 5px; 
+    font-size: 18px;
+}
+
+
+.popup-content .submit-btn{
+    border-radius: 30px;
+    padding: 10px 50px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 
 @media (max-width: 768px) {
     .container .fb-btn{
